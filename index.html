@@ -526,7 +526,7 @@
                         <td colspan="2">' + (feature.properties['COUNTRY'] !== null ? autolinker.link(feature.properties['COUNTRY'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['HÉBERGEME'] !== null ? autolinker.link(feature.properties['HÉBERGEME'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
@@ -535,7 +535,7 @@
                         <td colspan="2">' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['SERVICE AL'] !== null ? autolinker.link(feature.properties['SERVICE AL'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
@@ -1369,7 +1369,7 @@
                         <td colspan="2">' + (feature.properties['COUNTRY'] !== null ? autolinker.link(feature.properties['COUNTRY'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['HÉBERGEMEN'] !== null ? autolinker.link(feature.properties['HÉBERGEMEN'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
@@ -1378,7 +1378,7 @@
                         <td colspan="2">' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['SERVICE AL'] !== null ? autolinker.link(feature.properties['SERVICE AL'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
@@ -1387,7 +1387,7 @@
                         <td colspan="2">' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['TRAVAIL DE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
@@ -1405,16 +1405,16 @@
                         <td colspan="2">' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['MAISON DE '] !== null ? autolinker.link(feature.properties['MAISON DE '].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['SANTÉ MENT'] !== null ? autolinker.link(feature.properties['SANTÉ MENT'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['CENTRE DE '] !== null ? autolinker.link(feature.properties['CENTRE DE '].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['SERVICE DE'] !== null ? autolinker.link(feature.properties['SERVICE DE'].toLocaleString()) : '') + '</td>\
+                        <td colspan="2">' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['result_num'] !== null ? autolinker.link(feature.properties['result_num'].toLocaleString()) : '') + '</td>\
@@ -1743,7 +1743,7 @@
         document.getElementById("all").appendChild(col1);
         document.getElementById("all").appendChild(col2);
         col1.appendChild(mapDiv)
-        var Filters = {"FEMME": "str","SEXUALITÉ": "str","FAMILLE": "str","HÉBERGEMENT": "str","SERVICE DE CONSOMMATION SUPERVISÉE": "str","CENTRE DE JOUR": "str","DÉPENDANCE": "str","SANTÉ MENTALE": "str","TRAVAIL DE RUE": "str","SERVICE ALIMENTAIRE": "str","JEUNESSE": "str","NALOXONE": "str","MAISON DE JEUNE": "str","SECTEUR": "str","CAMI": "str","PSOC": "str"};
+        var Filters = {"FEMME": "str","SEXUALITÉ": "str","TRAVAIL DE RUE": "str","CAMI": "str","FAMILLE": "str","HÉBERGEMENT": "str","MAISON DE JEUNE": "str","SERVICE DE CONSOMMATION SUPERVISÉE": "str","SANTÉ MENTALE": "str","CENTRE DE JOUR": "str","PSOC": "str","SERVICE ALIMENTAIRE": "str","DÉPENDANCE": "str","JEUNESSE": "str","NALOXONE": "str","SECTEUR": "str"};
         function filterFunc() {
           map.eachLayer(function(lyr){
           if ("options" in lyr && "dataVar" in lyr["options"]){
@@ -1897,6 +1897,68 @@
             div_SEXUALIT.appendChild(reset_SEXUALIT);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
+            var div_TRAVAILDERUE = document.createElement('div');
+            div_TRAVAILDERUE.id = "div_TRAVAILDERUE";
+            div_TRAVAILDERUE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_TRAVAILDERUE);
+            sel_TRAVAILDERUE = document.createElement('select');
+            sel_TRAVAILDERUE.multiple = true;
+            sel_TRAVAILDERUE.size = 2;
+            sel_TRAVAILDERUE.id = "sel_TRAVAILDERUE";
+            var TRAVAILDERUE_options_str = "<option value='' unselected></option>";
+            sel_TRAVAILDERUE.onchange = function(){filterFunc()};
+            TRAVAILDERUE_options_str  += '<option value="NULL">NULL</option>';
+            TRAVAILDERUE_options_str  += '<option value="travail de rue">travail de rue</option>';
+            sel_TRAVAILDERUE.innerHTML = TRAVAILDERUE_options_str;
+            div_TRAVAILDERUE.appendChild(sel_TRAVAILDERUE);
+            var lab_TRAVAILDERUE = document.createElement('div');
+            lab_TRAVAILDERUE.innerHTML = 'TRAVAIL DE RUE';
+            lab_TRAVAILDERUE.className = 'filterlabel';
+            div_TRAVAILDERUE.appendChild(lab_TRAVAILDERUE);
+            var reset_TRAVAILDERUE = document.createElement('div');
+            reset_TRAVAILDERUE.innerHTML = 'clear filter';
+            reset_TRAVAILDERUE.className = 'filterlabel';
+            reset_TRAVAILDERUE.onclick = function() {
+                var options = document.getElementById("sel_TRAVAILDERUE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_TRAVAILDERUE.appendChild(reset_TRAVAILDERUE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_CAMI = document.createElement('div');
+            div_CAMI.id = "div_CAMI";
+            div_CAMI.className= "filterselect";
+            document.getElementById("menu").appendChild(div_CAMI);
+            sel_CAMI = document.createElement('select');
+            sel_CAMI.multiple = true;
+            sel_CAMI.size = 2;
+            sel_CAMI.id = "sel_CAMI";
+            var CAMI_options_str = "<option value='' unselected></option>";
+            sel_CAMI.onchange = function(){filterFunc()};
+            CAMI_options_str  += '<option value="NULL">NULL</option>';
+            CAMI_options_str  += '<option value="CAMI">CAMI</option>';
+            sel_CAMI.innerHTML = CAMI_options_str;
+            div_CAMI.appendChild(sel_CAMI);
+            var lab_CAMI = document.createElement('div');
+            lab_CAMI.innerHTML = 'CAMI';
+            lab_CAMI.className = 'filterlabel';
+            div_CAMI.appendChild(lab_CAMI);
+            var reset_CAMI = document.createElement('div');
+            reset_CAMI.innerHTML = 'clear filter';
+            reset_CAMI.className = 'filterlabel';
+            reset_CAMI.onclick = function() {
+                var options = document.getElementById("sel_CAMI").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_CAMI.appendChild(reset_CAMI);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
             var div_FAMILLE = document.createElement('div');
             div_FAMILLE.id = "div_FAMILLE";
             div_FAMILLE.className= "filterselect";
@@ -1959,6 +2021,37 @@
             div_HBERGEMENT.appendChild(reset_HBERGEMENT);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
+            var div_MAISONDEJEUNE = document.createElement('div');
+            div_MAISONDEJEUNE.id = "div_MAISONDEJEUNE";
+            div_MAISONDEJEUNE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_MAISONDEJEUNE);
+            sel_MAISONDEJEUNE = document.createElement('select');
+            sel_MAISONDEJEUNE.multiple = true;
+            sel_MAISONDEJEUNE.size = 2;
+            sel_MAISONDEJEUNE.id = "sel_MAISONDEJEUNE";
+            var MAISONDEJEUNE_options_str = "<option value='' unselected></option>";
+            sel_MAISONDEJEUNE.onchange = function(){filterFunc()};
+            MAISONDEJEUNE_options_str  += '<option value="NULL">NULL</option>';
+            MAISONDEJEUNE_options_str  += '<option value="maison de jeune">maison de jeune</option>';
+            sel_MAISONDEJEUNE.innerHTML = MAISONDEJEUNE_options_str;
+            div_MAISONDEJEUNE.appendChild(sel_MAISONDEJEUNE);
+            var lab_MAISONDEJEUNE = document.createElement('div');
+            lab_MAISONDEJEUNE.innerHTML = 'MAISON DE JEUNE';
+            lab_MAISONDEJEUNE.className = 'filterlabel';
+            div_MAISONDEJEUNE.appendChild(lab_MAISONDEJEUNE);
+            var reset_MAISONDEJEUNE = document.createElement('div');
+            reset_MAISONDEJEUNE.innerHTML = 'clear filter';
+            reset_MAISONDEJEUNE.className = 'filterlabel';
+            reset_MAISONDEJEUNE.onclick = function() {
+                var options = document.getElementById("sel_MAISONDEJEUNE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_MAISONDEJEUNE.appendChild(reset_MAISONDEJEUNE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
             var div_SERVICEDECONSOMMATIONSUPERVISE = document.createElement('div');
             div_SERVICEDECONSOMMATIONSUPERVISE.id = "div_SERVICEDECONSOMMATIONSUPERVISE";
             div_SERVICEDECONSOMMATIONSUPERVISE.className= "filterselect";
@@ -1988,68 +2081,6 @@
                 filterFunc();
             };
             div_SERVICEDECONSOMMATIONSUPERVISE.appendChild(reset_SERVICEDECONSOMMATIONSUPERVISE);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_CENTREDEJOUR = document.createElement('div');
-            div_CENTREDEJOUR.id = "div_CENTREDEJOUR";
-            div_CENTREDEJOUR.className= "filterselect";
-            document.getElementById("menu").appendChild(div_CENTREDEJOUR);
-            sel_CENTREDEJOUR = document.createElement('select');
-            sel_CENTREDEJOUR.multiple = true;
-            sel_CENTREDEJOUR.size = 2;
-            sel_CENTREDEJOUR.id = "sel_CENTREDEJOUR";
-            var CENTREDEJOUR_options_str = "<option value='' unselected></option>";
-            sel_CENTREDEJOUR.onchange = function(){filterFunc()};
-            CENTREDEJOUR_options_str  += '<option value="NULL">NULL</option>';
-            CENTREDEJOUR_options_str  += '<option value="centre de jour">centre de jour</option>';
-            sel_CENTREDEJOUR.innerHTML = CENTREDEJOUR_options_str;
-            div_CENTREDEJOUR.appendChild(sel_CENTREDEJOUR);
-            var lab_CENTREDEJOUR = document.createElement('div');
-            lab_CENTREDEJOUR.innerHTML = 'CENTRE DE JOUR';
-            lab_CENTREDEJOUR.className = 'filterlabel';
-            div_CENTREDEJOUR.appendChild(lab_CENTREDEJOUR);
-            var reset_CENTREDEJOUR = document.createElement('div');
-            reset_CENTREDEJOUR.innerHTML = 'clear filter';
-            reset_CENTREDEJOUR.className = 'filterlabel';
-            reset_CENTREDEJOUR.onclick = function() {
-                var options = document.getElementById("sel_CENTREDEJOUR").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_CENTREDEJOUR.appendChild(reset_CENTREDEJOUR);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_DPENDANCE = document.createElement('div');
-            div_DPENDANCE.id = "div_DPENDANCE";
-            div_DPENDANCE.className= "filterselect";
-            document.getElementById("menu").appendChild(div_DPENDANCE);
-            sel_DPENDANCE = document.createElement('select');
-            sel_DPENDANCE.multiple = true;
-            sel_DPENDANCE.size = 2;
-            sel_DPENDANCE.id = "sel_DPENDANCE";
-            var DPENDANCE_options_str = "<option value='' unselected></option>";
-            sel_DPENDANCE.onchange = function(){filterFunc()};
-            DPENDANCE_options_str  += '<option value="NULL">NULL</option>';
-            DPENDANCE_options_str  += '<option value="dépendance">dépendance</option>';
-            sel_DPENDANCE.innerHTML = DPENDANCE_options_str;
-            div_DPENDANCE.appendChild(sel_DPENDANCE);
-            var lab_DPENDANCE = document.createElement('div');
-            lab_DPENDANCE.innerHTML = 'DÉPENDANCE';
-            lab_DPENDANCE.className = 'filterlabel';
-            div_DPENDANCE.appendChild(lab_DPENDANCE);
-            var reset_DPENDANCE = document.createElement('div');
-            reset_DPENDANCE.innerHTML = 'clear filter';
-            reset_DPENDANCE.className = 'filterlabel';
-            reset_DPENDANCE.onclick = function() {
-                var options = document.getElementById("sel_DPENDANCE").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_DPENDANCE.appendChild(reset_DPENDANCE);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
             var div_SANTMENTALE = document.createElement('div');
@@ -2083,35 +2114,66 @@
             div_SANTMENTALE.appendChild(reset_SANTMENTALE);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
-            var div_TRAVAILDERUE = document.createElement('div');
-            div_TRAVAILDERUE.id = "div_TRAVAILDERUE";
-            div_TRAVAILDERUE.className= "filterselect";
-            document.getElementById("menu").appendChild(div_TRAVAILDERUE);
-            sel_TRAVAILDERUE = document.createElement('select');
-            sel_TRAVAILDERUE.multiple = true;
-            sel_TRAVAILDERUE.size = 2;
-            sel_TRAVAILDERUE.id = "sel_TRAVAILDERUE";
-            var TRAVAILDERUE_options_str = "<option value='' unselected></option>";
-            sel_TRAVAILDERUE.onchange = function(){filterFunc()};
-            TRAVAILDERUE_options_str  += '<option value="NULL">NULL</option>';
-            TRAVAILDERUE_options_str  += '<option value="travail de rue">travail de rue</option>';
-            sel_TRAVAILDERUE.innerHTML = TRAVAILDERUE_options_str;
-            div_TRAVAILDERUE.appendChild(sel_TRAVAILDERUE);
-            var lab_TRAVAILDERUE = document.createElement('div');
-            lab_TRAVAILDERUE.innerHTML = 'TRAVAIL DE RUE';
-            lab_TRAVAILDERUE.className = 'filterlabel';
-            div_TRAVAILDERUE.appendChild(lab_TRAVAILDERUE);
-            var reset_TRAVAILDERUE = document.createElement('div');
-            reset_TRAVAILDERUE.innerHTML = 'clear filter';
-            reset_TRAVAILDERUE.className = 'filterlabel';
-            reset_TRAVAILDERUE.onclick = function() {
-                var options = document.getElementById("sel_TRAVAILDERUE").options;
+            var div_CENTREDEJOUR = document.createElement('div');
+            div_CENTREDEJOUR.id = "div_CENTREDEJOUR";
+            div_CENTREDEJOUR.className= "filterselect";
+            document.getElementById("menu").appendChild(div_CENTREDEJOUR);
+            sel_CENTREDEJOUR = document.createElement('select');
+            sel_CENTREDEJOUR.multiple = true;
+            sel_CENTREDEJOUR.size = 2;
+            sel_CENTREDEJOUR.id = "sel_CENTREDEJOUR";
+            var CENTREDEJOUR_options_str = "<option value='' unselected></option>";
+            sel_CENTREDEJOUR.onchange = function(){filterFunc()};
+            CENTREDEJOUR_options_str  += '<option value="NULL">NULL</option>';
+            CENTREDEJOUR_options_str  += '<option value="centre de jour">centre de jour</option>';
+            sel_CENTREDEJOUR.innerHTML = CENTREDEJOUR_options_str;
+            div_CENTREDEJOUR.appendChild(sel_CENTREDEJOUR);
+            var lab_CENTREDEJOUR = document.createElement('div');
+            lab_CENTREDEJOUR.innerHTML = 'CENTRE DE JOUR';
+            lab_CENTREDEJOUR.className = 'filterlabel';
+            div_CENTREDEJOUR.appendChild(lab_CENTREDEJOUR);
+            var reset_CENTREDEJOUR = document.createElement('div');
+            reset_CENTREDEJOUR.innerHTML = 'clear filter';
+            reset_CENTREDEJOUR.className = 'filterlabel';
+            reset_CENTREDEJOUR.onclick = function() {
+                var options = document.getElementById("sel_CENTREDEJOUR").options;
                 for (var i=0; i < options.length; i++) {
                     options[i].selected = false;
                 }
                 filterFunc();
             };
-            div_TRAVAILDERUE.appendChild(reset_TRAVAILDERUE);
+            div_CENTREDEJOUR.appendChild(reset_CENTREDEJOUR);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_PSOC = document.createElement('div');
+            div_PSOC.id = "div_PSOC";
+            div_PSOC.className= "filterselect";
+            document.getElementById("menu").appendChild(div_PSOC);
+            sel_PSOC = document.createElement('select');
+            sel_PSOC.multiple = true;
+            sel_PSOC.size = 2;
+            sel_PSOC.id = "sel_PSOC";
+            var PSOC_options_str = "<option value='' unselected></option>";
+            sel_PSOC.onchange = function(){filterFunc()};
+            PSOC_options_str  += '<option value="NULL">NULL</option>';
+            PSOC_options_str  += '<option value="PSOC">PSOC</option>';
+            sel_PSOC.innerHTML = PSOC_options_str;
+            div_PSOC.appendChild(sel_PSOC);
+            var lab_PSOC = document.createElement('div');
+            lab_PSOC.innerHTML = 'PSOC';
+            lab_PSOC.className = 'filterlabel';
+            div_PSOC.appendChild(lab_PSOC);
+            var reset_PSOC = document.createElement('div');
+            reset_PSOC.innerHTML = 'clear filter';
+            reset_PSOC.className = 'filterlabel';
+            reset_PSOC.onclick = function() {
+                var options = document.getElementById("sel_PSOC").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_PSOC.appendChild(reset_PSOC);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
             var div_SERVICEALIMENTAIRE = document.createElement('div');
@@ -2143,6 +2205,37 @@
                 filterFunc();
             };
             div_SERVICEALIMENTAIRE.appendChild(reset_SERVICEALIMENTAIRE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_DPENDANCE = document.createElement('div');
+            div_DPENDANCE.id = "div_DPENDANCE";
+            div_DPENDANCE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_DPENDANCE);
+            sel_DPENDANCE = document.createElement('select');
+            sel_DPENDANCE.multiple = true;
+            sel_DPENDANCE.size = 2;
+            sel_DPENDANCE.id = "sel_DPENDANCE";
+            var DPENDANCE_options_str = "<option value='' unselected></option>";
+            sel_DPENDANCE.onchange = function(){filterFunc()};
+            DPENDANCE_options_str  += '<option value="NULL">NULL</option>';
+            DPENDANCE_options_str  += '<option value="dépendance">dépendance</option>';
+            sel_DPENDANCE.innerHTML = DPENDANCE_options_str;
+            div_DPENDANCE.appendChild(sel_DPENDANCE);
+            var lab_DPENDANCE = document.createElement('div');
+            lab_DPENDANCE.innerHTML = 'DÉPENDANCE';
+            lab_DPENDANCE.className = 'filterlabel';
+            div_DPENDANCE.appendChild(lab_DPENDANCE);
+            var reset_DPENDANCE = document.createElement('div');
+            reset_DPENDANCE.innerHTML = 'clear filter';
+            reset_DPENDANCE.className = 'filterlabel';
+            reset_DPENDANCE.onclick = function() {
+                var options = document.getElementById("sel_DPENDANCE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_DPENDANCE.appendChild(reset_DPENDANCE);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
             var div_JEUNESSE = document.createElement('div');
@@ -2207,37 +2300,6 @@
             div_NALOXONE.appendChild(reset_NALOXONE);
             document.getElementById("menu").appendChild(
                 document.createElement("div"));
-            var div_MAISONDEJEUNE = document.createElement('div');
-            div_MAISONDEJEUNE.id = "div_MAISONDEJEUNE";
-            div_MAISONDEJEUNE.className= "filterselect";
-            document.getElementById("menu").appendChild(div_MAISONDEJEUNE);
-            sel_MAISONDEJEUNE = document.createElement('select');
-            sel_MAISONDEJEUNE.multiple = true;
-            sel_MAISONDEJEUNE.size = 2;
-            sel_MAISONDEJEUNE.id = "sel_MAISONDEJEUNE";
-            var MAISONDEJEUNE_options_str = "<option value='' unselected></option>";
-            sel_MAISONDEJEUNE.onchange = function(){filterFunc()};
-            MAISONDEJEUNE_options_str  += '<option value="NULL">NULL</option>';
-            MAISONDEJEUNE_options_str  += '<option value="maison de jeune">maison de jeune</option>';
-            sel_MAISONDEJEUNE.innerHTML = MAISONDEJEUNE_options_str;
-            div_MAISONDEJEUNE.appendChild(sel_MAISONDEJEUNE);
-            var lab_MAISONDEJEUNE = document.createElement('div');
-            lab_MAISONDEJEUNE.innerHTML = 'MAISON DE JEUNE';
-            lab_MAISONDEJEUNE.className = 'filterlabel';
-            div_MAISONDEJEUNE.appendChild(lab_MAISONDEJEUNE);
-            var reset_MAISONDEJEUNE = document.createElement('div');
-            reset_MAISONDEJEUNE.innerHTML = 'clear filter';
-            reset_MAISONDEJEUNE.className = 'filterlabel';
-            reset_MAISONDEJEUNE.onclick = function() {
-                var options = document.getElementById("sel_MAISONDEJEUNE").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_MAISONDEJEUNE.appendChild(reset_MAISONDEJEUNE);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
             var div_SECTEUR = document.createElement('div');
             div_SECTEUR.id = "div_SECTEUR";
             div_SECTEUR.className= "filterselect";
@@ -2267,68 +2329,6 @@
                 filterFunc();
             };
             div_SECTEUR.appendChild(reset_SECTEUR);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_CAMI = document.createElement('div');
-            div_CAMI.id = "div_CAMI";
-            div_CAMI.className= "filterselect";
-            document.getElementById("menu").appendChild(div_CAMI);
-            sel_CAMI = document.createElement('select');
-            sel_CAMI.multiple = true;
-            sel_CAMI.size = 2;
-            sel_CAMI.id = "sel_CAMI";
-            var CAMI_options_str = "<option value='' unselected></option>";
-            sel_CAMI.onchange = function(){filterFunc()};
-            CAMI_options_str  += '<option value="NULL">NULL</option>';
-            CAMI_options_str  += '<option value="CAMI">CAMI</option>';
-            sel_CAMI.innerHTML = CAMI_options_str;
-            div_CAMI.appendChild(sel_CAMI);
-            var lab_CAMI = document.createElement('div');
-            lab_CAMI.innerHTML = 'CAMI';
-            lab_CAMI.className = 'filterlabel';
-            div_CAMI.appendChild(lab_CAMI);
-            var reset_CAMI = document.createElement('div');
-            reset_CAMI.innerHTML = 'clear filter';
-            reset_CAMI.className = 'filterlabel';
-            reset_CAMI.onclick = function() {
-                var options = document.getElementById("sel_CAMI").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_CAMI.appendChild(reset_CAMI);
-            document.getElementById("menu").appendChild(
-                document.createElement("div"));
-            var div_PSOC = document.createElement('div');
-            div_PSOC.id = "div_PSOC";
-            div_PSOC.className= "filterselect";
-            document.getElementById("menu").appendChild(div_PSOC);
-            sel_PSOC = document.createElement('select');
-            sel_PSOC.multiple = true;
-            sel_PSOC.size = 2;
-            sel_PSOC.id = "sel_PSOC";
-            var PSOC_options_str = "<option value='' unselected></option>";
-            sel_PSOC.onchange = function(){filterFunc()};
-            PSOC_options_str  += '<option value="NULL">NULL</option>';
-            PSOC_options_str  += '<option value="PSOC">PSOC</option>';
-            sel_PSOC.innerHTML = PSOC_options_str;
-            div_PSOC.appendChild(sel_PSOC);
-            var lab_PSOC = document.createElement('div');
-            lab_PSOC.innerHTML = 'PSOC';
-            lab_PSOC.className = 'filterlabel';
-            div_PSOC.appendChild(lab_PSOC);
-            var reset_PSOC = document.createElement('div');
-            reset_PSOC.innerHTML = 'clear filter';
-            reset_PSOC.className = 'filterlabel';
-            reset_PSOC.onclick = function() {
-                var options = document.getElementById("sel_PSOC").options;
-                for (var i=0; i < options.length; i++) {
-                    options[i].selected = false;
-                }
-                filterFunc();
-            };
-            div_PSOC.appendChild(reset_PSOC);
         </script>
     </body>
 </html>
