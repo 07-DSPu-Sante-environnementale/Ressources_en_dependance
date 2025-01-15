@@ -1,0 +1,2334 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet-svg-shape-markers.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/Municipalits_1.js"></script>
+        <script src="data/Tamponde250mtresentourantuneressourceendpendance_2.js"></script>
+        <script src="data/Ressourcesendpendance250mtresdunecole_3.js"></script>
+        <script src="data/coles250mtresduneressourceendpendance_4.js"></script>
+        <script src="data/Tamponde250mtresentourantuneressourceendpendance_5.js"></script>
+        <script src="data/Ressourcesendpendance250mtresdunecole_6.js"></script>
+        <script src="data/coles250mtresduneressourceendpendance_7.js"></script>
+        <script src="data/Tamponde250mtresentourantuneressourceendpendance_8.js"></script>
+        <script src="data/Ressourcesendpendance250mtresdunecole_9.js"></script>
+        <script src="data/coles250mtresduneressourceendpendance_10.js"></script>
+        <script src="data/Tamponde250mtresentourantuneressourceendpendance_11.js"></script>
+        <script src="data/Ressourcesendpendance250mtresdunegarderie_12.js"></script>
+        <script src="data/Garderies250mtresduneressourceendpendance_13.js"></script>
+        <script src="data/Tamponde250mtresentourantuneressourceendpendance_14.js"></script>
+        <script src="data/Ressourcesendpendance250mtresdunCPE_15.js"></script>
+        <script src="data/CPE250mtresduneressourceendpendance_16.js"></script>
+        <script>
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[45.34913063210233,-75.82541584867397],[45.50668257263902,-75.58411736771701]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        function pop_Municipalits_1(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_VA_SUP'] !== null ? autolinker.link(feature.properties['MUS_VA_SUP'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_NO_IND'] !== null ? autolinker.link(feature.properties['MUS_NO_IND'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_DE_IND'] !== null ? autolinker.link(feature.properties['MUS_DE_IND'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_GEO'] !== null ? autolinker.link(feature.properties['MUS_CO_GEO'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_DES'] !== null ? autolinker.link(feature.properties['MUS_CO_DES'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_NM_MUN'] !== null ? autolinker.link(feature.properties['MUS_NM_MUN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_NM_NMC'] !== null ? autolinker.link(feature.properties['MUS_NM_NMC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_MRC'] !== null ? autolinker.link(feature.properties['MUS_CO_MRC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_NM_MRC'] !== null ? autolinker.link(feature.properties['MUS_NM_MRC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_REG'] !== null ? autolinker.link(feature.properties['MUS_CO_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_NM_REG'] !== null ? autolinker.link(feature.properties['MUS_NM_REG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_NM_AGG'] !== null ? autolinker.link(feature.properties['MUS_NM_AGG'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_COM'] !== null ? autolinker.link(feature.properties['MUS_CO_COM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_NM_COM'] !== null ? autolinker.link(feature.properties['MUS_NM_COM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_DA_CON'] !== null ? autolinker.link(feature.properties['MUS_DA_CON'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_MOD'] !== null ? autolinker.link(feature.properties['MUS_CO_MOD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_DA_MOD'] !== null ? autolinker.link(feature.properties['MUS_DA_MOD'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_SOU'] !== null ? autolinker.link(feature.properties['MUS_CO_SOU'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_REF'] !== null ? autolinker.link(feature.properties['MUS_CO_REF'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MUS_CO_VER'] !== null ? autolinker.link(feature.properties['MUS_CO_VER'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ID'] !== null ? autolinker.link(feature.properties['ID'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Municipalits_1_0() {
+            return {
+                pane: 'pane_Municipalits_1',
+                opacity: 1,
+                color: 'rgba(255,255,255,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,158,23,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Municipalits_1');
+        map.getPane('pane_Municipalits_1').style.zIndex = 401;
+        map.getPane('pane_Municipalits_1').style['mix-blend-mode'] = 'normal';
+        var layer_Municipalits_1 = new L.geoJson(json_Municipalits_1, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Municipalits_1',
+            layerName: 'layer_Municipalits_1',
+            pane: 'pane_Municipalits_1',
+            onEachFeature: pop_Municipalits_1,
+            style: style_Municipalits_1_0,
+        });
+        bounds_group.addLayer(layer_Municipalits_1);
+        map.addLayer(layer_Municipalits_1);
+        function pop_Tamponde250mtresentourantuneressourceendpendance_2(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STATE'] !== null ? autolinker.link(feature.properties['STATE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTRY'] !== null ? autolinker.link(feature.properties['COUNTRY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['result_num'] !== null ? autolinker.link(feature.properties['result_num'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['osm_id'] !== null ? autolinker.link(feature.properties['osm_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['display_na'] !== null ? autolinker.link(feature.properties['display_na'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['category'] !== null ? autolinker.link(feature.properties['category'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['latlong'] !== null ? autolinker.link(feature.properties['latlong'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Tamponde250mtresentourantuneressourceendpendance_2_0() {
+            return {
+                pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_2',
+                opacity: 1,
+                color: 'rgba(43,131,186,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(164,113,88,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Tamponde250mtresentourantuneressourceendpendance_2');
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_2').style.zIndex = 402;
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_2').style['mix-blend-mode'] = 'normal';
+        var layer_Tamponde250mtresentourantuneressourceendpendance_2 = new L.geoJson(json_Tamponde250mtresentourantuneressourceendpendance_2, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Tamponde250mtresentourantuneressourceendpendance_2',
+            layerName: 'layer_Tamponde250mtresentourantuneressourceendpendance_2',
+            pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_2',
+            onEachFeature: pop_Tamponde250mtresentourantuneressourceendpendance_2,
+            style: style_Tamponde250mtresentourantuneressourceendpendance_2_0,
+        });
+        bounds_group.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_2);
+        map.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_2);
+        function pop_Ressourcesendpendance250mtresdunecole_3(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NAME</strong><br />' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CITY</strong><br />' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>HÉBERGEMENT</strong><br />' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CAMI</strong><br />' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SECTEUR</strong><br />' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE ALIMENTAIRE</strong><br />' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NALOXONE</strong><br />' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>DÉPENDANCE</strong><br />' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TRAVAIL DE RUE</strong><br />' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PSOC</strong><br />' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SEXUALITÉ</strong><br />' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FEMME</strong><br />' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>JEUNESSE</strong><br />' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FAMILLE</strong><br />' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MAISON DE JEUNE</strong><br />' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SANTÉ MENTALE</strong><br />' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CENTRE DE JOUR</strong><br />' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE DE CONSOMMATION SUPERVISÉE</strong><br />' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Ressourcesendpendance250mtresdunecole_3_0() {
+            return {
+                pane: 'pane_Ressourcesendpendance250mtresdunecole_3',
+                shape: 'square',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Ressourcesendpendance250mtresdunecole_3');
+        map.getPane('pane_Ressourcesendpendance250mtresdunecole_3').style.zIndex = 403;
+        map.getPane('pane_Ressourcesendpendance250mtresdunecole_3').style['mix-blend-mode'] = 'normal';
+        var layer_Ressourcesendpendance250mtresdunecole_3 = new L.geoJson(json_Ressourcesendpendance250mtresdunecole_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Ressourcesendpendance250mtresdunecole_3',
+            layerName: 'layer_Ressourcesendpendance250mtresdunecole_3',
+            pane: 'pane_Ressourcesendpendance250mtresdunecole_3',
+            onEachFeature: pop_Ressourcesendpendance250mtresdunecole_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Ressourcesendpendance250mtresdunecole_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Ressourcesendpendance250mtresdunecole_3);
+        map.addLayer(layer_Ressourcesendpendance250mtresdunecole_3);
+        function pop_coles250mtresduneressourceendpendance_4(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MUNICIPALITÉ</strong><br />' + (feature.properties['MUNICIPALITÉ'] !== null ? autolinker.link(feature.properties['MUNICIPALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADRESSE</strong><br />' + (feature.properties['ADRESSE'] !== null ? autolinker.link(feature.properties['ADRESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_coles250mtresduneressourceendpendance_4_0() {
+            return {
+                pane: 'pane_coles250mtresduneressourceendpendance_4',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(43,131,186,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_coles250mtresduneressourceendpendance_4');
+        map.getPane('pane_coles250mtresduneressourceendpendance_4').style.zIndex = 404;
+        map.getPane('pane_coles250mtresduneressourceendpendance_4').style['mix-blend-mode'] = 'normal';
+        var layer_coles250mtresduneressourceendpendance_4 = new L.geoJson(json_coles250mtresduneressourceendpendance_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_coles250mtresduneressourceendpendance_4',
+            layerName: 'layer_coles250mtresduneressourceendpendance_4',
+            pane: 'pane_coles250mtresduneressourceendpendance_4',
+            onEachFeature: pop_coles250mtresduneressourceendpendance_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_coles250mtresduneressourceendpendance_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_coles250mtresduneressourceendpendance_4);
+        map.addLayer(layer_coles250mtresduneressourceendpendance_4);
+        function pop_Tamponde250mtresentourantuneressourceendpendance_5(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STATE'] !== null ? autolinker.link(feature.properties['STATE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTRY'] !== null ? autolinker.link(feature.properties['COUNTRY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HÉBERGEME'] !== null ? autolinker.link(feature.properties['HÉBERGEME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE AL'] !== null ? autolinker.link(feature.properties['SERVICE AL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['result_num'] !== null ? autolinker.link(feature.properties['result_num'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['osm_id'] !== null ? autolinker.link(feature.properties['osm_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['display_na'] !== null ? autolinker.link(feature.properties['display_na'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['category'] !== null ? autolinker.link(feature.properties['category'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['latlong'] !== null ? autolinker.link(feature.properties['latlong'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Tamponde250mtresentourantuneressourceendpendance_5_0() {
+            return {
+                pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_5',
+                opacity: 1,
+                color: 'rgba(255,255,191,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,139,143,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Tamponde250mtresentourantuneressourceendpendance_5');
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_5').style.zIndex = 405;
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_5').style['mix-blend-mode'] = 'normal';
+        var layer_Tamponde250mtresentourantuneressourceendpendance_5 = new L.geoJson(json_Tamponde250mtresentourantuneressourceendpendance_5, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Tamponde250mtresentourantuneressourceendpendance_5',
+            layerName: 'layer_Tamponde250mtresentourantuneressourceendpendance_5',
+            pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_5',
+            onEachFeature: pop_Tamponde250mtresentourantuneressourceendpendance_5,
+            style: style_Tamponde250mtresentourantuneressourceendpendance_5_0,
+        });
+        bounds_group.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_5);
+        map.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_5);
+        function pop_Ressourcesendpendance250mtresdunecole_6(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NAME</strong><br />' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CITY</strong><br />' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>HÉBERGEMENT</strong><br />' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CAMI</strong><br />' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SECTEUR</strong><br />' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE ALIMENTAIRE</strong><br />' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NALOXONE</strong><br />' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>DÉPENDANCE</strong><br />' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TRAVAIL DE RUE</strong><br />' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PSOC</strong><br />' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SEXUALITÉ</strong><br />' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FEMME</strong><br />' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>JEUNESSE</strong><br />' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FAMILLE</strong><br />' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MAISON DE JEUNE</strong><br />' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SANTÉ MENTALE</strong><br />' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CENTRE DE JOUR</strong><br />' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE DE CONSOMMATION SUPERVISÉE</strong><br />' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Ressourcesendpendance250mtresdunecole_6_0() {
+            return {
+                pane: 'pane_Ressourcesendpendance250mtresdunecole_6',
+                shape: 'square',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Ressourcesendpendance250mtresdunecole_6');
+        map.getPane('pane_Ressourcesendpendance250mtresdunecole_6').style.zIndex = 406;
+        map.getPane('pane_Ressourcesendpendance250mtresdunecole_6').style['mix-blend-mode'] = 'normal';
+        var layer_Ressourcesendpendance250mtresdunecole_6 = new L.geoJson(json_Ressourcesendpendance250mtresdunecole_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Ressourcesendpendance250mtresdunecole_6',
+            layerName: 'layer_Ressourcesendpendance250mtresdunecole_6',
+            pane: 'pane_Ressourcesendpendance250mtresdunecole_6',
+            onEachFeature: pop_Ressourcesendpendance250mtresdunecole_6,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Ressourcesendpendance250mtresdunecole_6_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Ressourcesendpendance250mtresdunecole_6);
+        map.addLayer(layer_Ressourcesendpendance250mtresdunecole_6);
+        function pop_coles250mtresduneressourceendpendance_7(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MUNICIPALITÉ</strong><br />' + (feature.properties['MUNICIPALITÉ'] !== null ? autolinker.link(feature.properties['MUNICIPALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADRESSE</strong><br />' + (feature.properties['ADRESSE'] !== null ? autolinker.link(feature.properties['ADRESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_coles250mtresduneressourceendpendance_7_0() {
+            return {
+                pane: 'pane_coles250mtresduneressourceendpendance_7',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_coles250mtresduneressourceendpendance_7');
+        map.getPane('pane_coles250mtresduneressourceendpendance_7').style.zIndex = 407;
+        map.getPane('pane_coles250mtresduneressourceendpendance_7').style['mix-blend-mode'] = 'normal';
+        var layer_coles250mtresduneressourceendpendance_7 = new L.geoJson(json_coles250mtresduneressourceendpendance_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_coles250mtresduneressourceendpendance_7',
+            layerName: 'layer_coles250mtresduneressourceendpendance_7',
+            pane: 'pane_coles250mtresduneressourceendpendance_7',
+            onEachFeature: pop_coles250mtresduneressourceendpendance_7,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_coles250mtresduneressourceendpendance_7_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_coles250mtresduneressourceendpendance_7);
+        map.addLayer(layer_coles250mtresduneressourceendpendance_7);
+        function pop_Tamponde250mtresentourantuneressourceendpendance_8(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STATE'] !== null ? autolinker.link(feature.properties['STATE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTRY'] !== null ? autolinker.link(feature.properties['COUNTRY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['result_num'] !== null ? autolinker.link(feature.properties['result_num'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['osm_id'] !== null ? autolinker.link(feature.properties['osm_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['display_na'] !== null ? autolinker.link(feature.properties['display_na'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['category'] !== null ? autolinker.link(feature.properties['category'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['latlong'] !== null ? autolinker.link(feature.properties['latlong'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Tamponde250mtresentourantuneressourceendpendance_8_0() {
+            return {
+                pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_8',
+                opacity: 1,
+                color: 'rgba(254,201,128,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,178,151,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Tamponde250mtresentourantuneressourceendpendance_8');
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_8').style.zIndex = 408;
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_8').style['mix-blend-mode'] = 'normal';
+        var layer_Tamponde250mtresentourantuneressourceendpendance_8 = new L.geoJson(json_Tamponde250mtresentourantuneressourceendpendance_8, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Tamponde250mtresentourantuneressourceendpendance_8',
+            layerName: 'layer_Tamponde250mtresentourantuneressourceendpendance_8',
+            pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_8',
+            onEachFeature: pop_Tamponde250mtresentourantuneressourceendpendance_8,
+            style: style_Tamponde250mtresentourantuneressourceendpendance_8_0,
+        });
+        bounds_group.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_8);
+        map.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_8);
+        function pop_Ressourcesendpendance250mtresdunecole_9(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NAME</strong><br />' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CITY</strong><br />' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>HÉBERGEMENT</strong><br />' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CAMI</strong><br />' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SECTEUR</strong><br />' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE ALIMENTAIRE</strong><br />' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NALOXONE</strong><br />' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>DÉPENDANCE</strong><br />' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TRAVAIL DE RUE</strong><br />' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PSOC</strong><br />' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SEXUALITÉ</strong><br />' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FEMME</strong><br />' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>JEUNESSE</strong><br />' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FAMILLE</strong><br />' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MAISON DE JEUNE</strong><br />' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SANTÉ MENTALE</strong><br />' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CENTRE DE JOUR</strong><br />' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE DE CONSOMMATION SUPERVISÉE</strong><br />' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Ressourcesendpendance250mtresdunecole_9_0() {
+            return {
+                pane: 'pane_Ressourcesendpendance250mtresdunecole_9',
+                shape: 'square',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,201,128,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Ressourcesendpendance250mtresdunecole_9');
+        map.getPane('pane_Ressourcesendpendance250mtresdunecole_9').style.zIndex = 409;
+        map.getPane('pane_Ressourcesendpendance250mtresdunecole_9').style['mix-blend-mode'] = 'normal';
+        var layer_Ressourcesendpendance250mtresdunecole_9 = new L.geoJson(json_Ressourcesendpendance250mtresdunecole_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Ressourcesendpendance250mtresdunecole_9',
+            layerName: 'layer_Ressourcesendpendance250mtresdunecole_9',
+            pane: 'pane_Ressourcesendpendance250mtresdunecole_9',
+            onEachFeature: pop_Ressourcesendpendance250mtresdunecole_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Ressourcesendpendance250mtresdunecole_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Ressourcesendpendance250mtresdunecole_9);
+        map.addLayer(layer_Ressourcesendpendance250mtresdunecole_9);
+        function pop_coles250mtresduneressourceendpendance_10(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MUNICIPALITÉ</strong><br />' + (feature.properties['MUNICIPALITÉ'] !== null ? autolinker.link(feature.properties['MUNICIPALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADRESSE</strong><br />' + (feature.properties['ADRESSE'] !== null ? autolinker.link(feature.properties['ADRESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_coles250mtresduneressourceendpendance_10_0() {
+            return {
+                pane: 'pane_coles250mtresduneressourceendpendance_10',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(229,182,54,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_coles250mtresduneressourceendpendance_10');
+        map.getPane('pane_coles250mtresduneressourceendpendance_10').style.zIndex = 410;
+        map.getPane('pane_coles250mtresduneressourceendpendance_10').style['mix-blend-mode'] = 'normal';
+        var layer_coles250mtresduneressourceendpendance_10 = new L.geoJson(json_coles250mtresduneressourceendpendance_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_coles250mtresduneressourceendpendance_10',
+            layerName: 'layer_coles250mtresduneressourceendpendance_10',
+            pane: 'pane_coles250mtresduneressourceendpendance_10',
+            onEachFeature: pop_coles250mtresduneressourceendpendance_10,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_coles250mtresduneressourceendpendance_10_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_coles250mtresduneressourceendpendance_10);
+        map.addLayer(layer_coles250mtresduneressourceendpendance_10);
+        function pop_Tamponde250mtresentourantuneressourceendpendance_11(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['fid'] !== null ? autolinker.link(feature.properties['fid'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STATE'] !== null ? autolinker.link(feature.properties['STATE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTRY'] !== null ? autolinker.link(feature.properties['COUNTRY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['result_num'] !== null ? autolinker.link(feature.properties['result_num'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['osm_id'] !== null ? autolinker.link(feature.properties['osm_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['display_na'] !== null ? autolinker.link(feature.properties['display_na'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['category'] !== null ? autolinker.link(feature.properties['category'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['latlong'] !== null ? autolinker.link(feature.properties['latlong'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Tamponde250mtresentourantuneressourceendpendance_11_0() {
+            return {
+                pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_11',
+                opacity: 1,
+                color: 'rgba(240,124,74,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,178,151,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Tamponde250mtresentourantuneressourceendpendance_11');
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_11').style.zIndex = 411;
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_11').style['mix-blend-mode'] = 'normal';
+        var layer_Tamponde250mtresentourantuneressourceendpendance_11 = new L.geoJson(json_Tamponde250mtresentourantuneressourceendpendance_11, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Tamponde250mtresentourantuneressourceendpendance_11',
+            layerName: 'layer_Tamponde250mtresentourantuneressourceendpendance_11',
+            pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_11',
+            onEachFeature: pop_Tamponde250mtresentourantuneressourceendpendance_11,
+            style: style_Tamponde250mtresentourantuneressourceendpendance_11_0,
+        });
+        bounds_group.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_11);
+        map.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_11);
+        function pop_Ressourcesendpendance250mtresdunegarderie_12(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NAME</strong><br />' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CITY</strong><br />' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>HÉBERGEMENT</strong><br />' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CAMI</strong><br />' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SECTEUR</strong><br />' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE ALIMENTAIRE</strong><br />' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NALOXONE</strong><br />' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>DÉPENDANCE</strong><br />' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TRAVAIL DE RUE</strong><br />' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PSOC</strong><br />' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SEXUALITÉ</strong><br />' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FEMME</strong><br />' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>JEUNESSE</strong><br />' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FAMILLE</strong><br />' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MAISON DE JEUNE</strong><br />' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SANTÉ MENTALE</strong><br />' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CENTRE DE JOUR</strong><br />' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE DE CONSOMMATION SUPERVISÉE</strong><br />' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Ressourcesendpendance250mtresdunegarderie_12_0() {
+            return {
+                pane: 'pane_Ressourcesendpendance250mtresdunegarderie_12',
+                shape: 'square',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,124,74,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Ressourcesendpendance250mtresdunegarderie_12');
+        map.getPane('pane_Ressourcesendpendance250mtresdunegarderie_12').style.zIndex = 412;
+        map.getPane('pane_Ressourcesendpendance250mtresdunegarderie_12').style['mix-blend-mode'] = 'normal';
+        var layer_Ressourcesendpendance250mtresdunegarderie_12 = new L.geoJson(json_Ressourcesendpendance250mtresdunegarderie_12, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Ressourcesendpendance250mtresdunegarderie_12',
+            layerName: 'layer_Ressourcesendpendance250mtresdunegarderie_12',
+            pane: 'pane_Ressourcesendpendance250mtresdunegarderie_12',
+            onEachFeature: pop_Ressourcesendpendance250mtresdunegarderie_12,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Ressourcesendpendance250mtresdunegarderie_12_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Ressourcesendpendance250mtresdunegarderie_12);
+        map.addLayer(layer_Ressourcesendpendance250mtresdunegarderie_12);
+        function pop_Garderies250mtresduneressourceendpendance_13(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>CITY</strong><br />' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Garderies250mtresduneressourceendpendance_13_0() {
+            return {
+                pane: 'pane_Garderies250mtresduneressourceendpendance_13',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,124,74,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Garderies250mtresduneressourceendpendance_13');
+        map.getPane('pane_Garderies250mtresduneressourceendpendance_13').style.zIndex = 413;
+        map.getPane('pane_Garderies250mtresduneressourceendpendance_13').style['mix-blend-mode'] = 'normal';
+        var layer_Garderies250mtresduneressourceendpendance_13 = new L.geoJson(json_Garderies250mtresduneressourceendpendance_13, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Garderies250mtresduneressourceendpendance_13',
+            layerName: 'layer_Garderies250mtresduneressourceendpendance_13',
+            pane: 'pane_Garderies250mtresduneressourceendpendance_13',
+            onEachFeature: pop_Garderies250mtresduneressourceendpendance_13,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_Garderies250mtresduneressourceendpendance_13_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Garderies250mtresduneressourceendpendance_13);
+        map.addLayer(layer_Garderies250mtresduneressourceendpendance_13);
+        function pop_Tamponde250mtresentourantuneressourceendpendance_14(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['STATE'] !== null ? autolinker.link(feature.properties['STATE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['COUNTRY'] !== null ? autolinker.link(feature.properties['COUNTRY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['HÉBERGEMEN'] !== null ? autolinker.link(feature.properties['HÉBERGEMEN'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE AL'] !== null ? autolinker.link(feature.properties['SERVICE AL'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['TRAVAIL DE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['MAISON DE '] !== null ? autolinker.link(feature.properties['MAISON DE '].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SANTÉ MENT'] !== null ? autolinker.link(feature.properties['SANTÉ MENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['CENTRE DE '] !== null ? autolinker.link(feature.properties['CENTRE DE '].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['SERVICE DE'] !== null ? autolinker.link(feature.properties['SERVICE DE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['result_num'] !== null ? autolinker.link(feature.properties['result_num'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['osm_id'] !== null ? autolinker.link(feature.properties['osm_id'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['display_na'] !== null ? autolinker.link(feature.properties['display_na'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['category'] !== null ? autolinker.link(feature.properties['category'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['type'] !== null ? autolinker.link(feature.properties['type'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['latlong'] !== null ? autolinker.link(feature.properties['latlong'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Tamponde250mtresentourantuneressourceendpendance_14_0() {
+            return {
+                pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_14',
+                opacity: 1,
+                color: 'rgba(215,25,28,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 4.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,207,80,0.0)',
+                interactive: false,
+            }
+        }
+        map.createPane('pane_Tamponde250mtresentourantuneressourceendpendance_14');
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_14').style.zIndex = 414;
+        map.getPane('pane_Tamponde250mtresentourantuneressourceendpendance_14').style['mix-blend-mode'] = 'normal';
+        var layer_Tamponde250mtresentourantuneressourceendpendance_14 = new L.geoJson(json_Tamponde250mtresentourantuneressourceendpendance_14, {
+            attribution: '',
+            interactive: false,
+            dataVar: 'json_Tamponde250mtresentourantuneressourceendpendance_14',
+            layerName: 'layer_Tamponde250mtresentourantuneressourceendpendance_14',
+            pane: 'pane_Tamponde250mtresentourantuneressourceendpendance_14',
+            onEachFeature: pop_Tamponde250mtresentourantuneressourceendpendance_14,
+            style: style_Tamponde250mtresentourantuneressourceendpendance_14_0,
+        });
+        bounds_group.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_14);
+        map.addLayer(layer_Tamponde250mtresentourantuneressourceendpendance_14);
+        function pop_Ressourcesendpendance250mtresdunCPE_15(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>NAME</strong><br />' + (feature.properties['NAME'] !== null ? autolinker.link(feature.properties['NAME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CITY</strong><br />' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>HÉBERGEMENT</strong><br />' + (feature.properties['HÉBERGEMENT'] !== null ? autolinker.link(feature.properties['HÉBERGEMENT'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CAMI</strong><br />' + (feature.properties['CAMI'] !== null ? autolinker.link(feature.properties['CAMI'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SECTEUR</strong><br />' + (feature.properties['SECTEUR'] !== null ? autolinker.link(feature.properties['SECTEUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE ALIMENTAIRE</strong><br />' + (feature.properties['SERVICE ALIMENTAIRE'] !== null ? autolinker.link(feature.properties['SERVICE ALIMENTAIRE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="NALOXONE"colspan="2"><strong>NALOXONE</strong><br />' + (feature.properties['NALOXONE'] !== null ? autolinker.link(feature.properties['NALOXONE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>DÉPENDANCE</strong><br />' + (feature.properties['DÉPENDANCE'] !== null ? autolinker.link(feature.properties['DÉPENDANCE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>TRAVAIL DE RUE</strong><br />' + (feature.properties['TRAVAIL DE RUE'] !== null ? autolinker.link(feature.properties['TRAVAIL DE RUE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>PSOC</strong><br />' + (feature.properties['PSOC'] !== null ? autolinker.link(feature.properties['PSOC'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SEXUALITÉ</strong><br />' + (feature.properties['SEXUALITÉ'] !== null ? autolinker.link(feature.properties['SEXUALITÉ'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FEMME</strong><br />' + (feature.properties['FEMME'] !== null ? autolinker.link(feature.properties['FEMME'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>JEUNESSE</strong><br />' + (feature.properties['JEUNESSE'] !== null ? autolinker.link(feature.properties['JEUNESSE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>FAMILLE</strong><br />' + (feature.properties['FAMILLE'] !== null ? autolinker.link(feature.properties['FAMILLE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>MAISON DE JEUNE</strong><br />' + (feature.properties['MAISON DE JEUNE'] !== null ? autolinker.link(feature.properties['MAISON DE JEUNE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SANTÉ MENTALE</strong><br />' + (feature.properties['SANTÉ MENTALE'] !== null ? autolinker.link(feature.properties['SANTÉ MENTALE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>CENTRE DE JOUR</strong><br />' + (feature.properties['CENTRE DE JOUR'] !== null ? autolinker.link(feature.properties['CENTRE DE JOUR'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>SERVICE DE CONSOMMATION SUPERVISÉE</strong><br />' + (feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'] !== null ? autolinker.link(feature.properties['SERVICE DE CONSOMMATION SUPERVISÉE'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Ressourcesendpendance250mtresdunCPE_15_0() {
+            return {
+                pane: 'pane_Ressourcesendpendance250mtresdunCPE_15',
+                shape: 'square',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Ressourcesendpendance250mtresdunCPE_15');
+        map.getPane('pane_Ressourcesendpendance250mtresdunCPE_15').style.zIndex = 415;
+        map.getPane('pane_Ressourcesendpendance250mtresdunCPE_15').style['mix-blend-mode'] = 'normal';
+        var layer_Ressourcesendpendance250mtresdunCPE_15 = new L.geoJson(json_Ressourcesendpendance250mtresdunCPE_15, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Ressourcesendpendance250mtresdunCPE_15',
+            layerName: 'layer_Ressourcesendpendance250mtresdunCPE_15',
+            pane: 'pane_Ressourcesendpendance250mtresdunCPE_15',
+            onEachFeature: pop_Ressourcesendpendance250mtresdunCPE_15,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.shapeMarker(latlng, style_Ressourcesendpendance250mtresdunCPE_15_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Ressourcesendpendance250mtresdunCPE_15);
+        map.addLayer(layer_Ressourcesendpendance250mtresdunCPE_15);
+        function pop_CPE250mtresduneressourceendpendance_16(feature, layer) {
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>CITY</strong><br />' + (feature.properties['CITY'] !== null ? autolinker.link(feature.properties['CITY'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>NOM</strong><br />' + (feature.properties['NOM'] !== null ? autolinker.link(feature.properties['NOM'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>ADDRESS</strong><br />' + (feature.properties['ADDRESS'] !== null ? autolinker.link(feature.properties['ADDRESS'].toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_CPE250mtresduneressourceendpendance_16_0() {
+            return {
+                pane: 'pane_CPE250mtresduneressourceendpendance_16',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_CPE250mtresduneressourceendpendance_16');
+        map.getPane('pane_CPE250mtresduneressourceendpendance_16').style.zIndex = 416;
+        map.getPane('pane_CPE250mtresduneressourceendpendance_16').style['mix-blend-mode'] = 'normal';
+        var layer_CPE250mtresduneressourceendpendance_16 = new L.geoJson(json_CPE250mtresduneressourceendpendance_16, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_CPE250mtresduneressourceendpendance_16',
+            layerName: 'layer_CPE250mtresduneressourceendpendance_16',
+            pane: 'pane_CPE250mtresduneressourceendpendance_16',
+            onEachFeature: pop_CPE250mtresduneressourceendpendance_16,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_CPE250mtresduneressourceendpendance_16_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_CPE250mtresduneressourceendpendance_16);
+        map.addLayer(layer_CPE250mtresduneressourceendpendance_16);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var overlaysTree = [
+        {label: '<b>CPE</b>', selectAllCheckbox: true, children: [
+            {label: '<img src="legend/CPE250mtresduneressourceendpendance_16.png" /> CPE à 250 mètres d\'une ressource en dépendance', layer: layer_CPE250mtresduneressourceendpendance_16},
+            {label: '<img src="legend/Ressourcesendpendance250mtresdunCPE_15.png" /> Ressources en dépendance à 250 mètres d\'un CPE', layer: layer_Ressourcesendpendance250mtresdunCPE_15},
+            {label: '<img src="legend/Tamponde250mtresentourantuneressourceendpendance_14.png" /> Tampon de 250 mètres entourant une ressource en dépendance', layer: layer_Tamponde250mtresentourantuneressourceendpendance_14},]},
+        {label: '<b>Garderies</b>', selectAllCheckbox: true, children: [
+            {label: '<img src="legend/Garderies250mtresduneressourceendpendance_13.png" /> Garderies à 250 mètres d\'une ressource en dépendance', layer: layer_Garderies250mtresduneressourceendpendance_13},
+            {label: '<img src="legend/Ressourcesendpendance250mtresdunegarderie_12.png" /> Ressources en dépendance à 250 mètres d\'une garderie', layer: layer_Ressourcesendpendance250mtresdunegarderie_12},
+            {label: '<img src="legend/Tamponde250mtresentourantuneressourceendpendance_11.png" /> Tampon de 250 mètres entourant une ressource en dépendance', layer: layer_Tamponde250mtresentourantuneressourceendpendance_11},]},
+        {label: '<b>Écoles préscolaires - primaires</b>', selectAllCheckbox: true, children: [
+            {label: '<img src="legend/coles250mtresduneressourceendpendance_10.png" /> Écoles à 250 mètres d\'une ressource en dépendance', layer: layer_coles250mtresduneressourceendpendance_10},
+            {label: '<img src="legend/Ressourcesendpendance250mtresdunecole_9.png" /> Ressources en dépendance à 250 mètres d\'une école', layer: layer_Ressourcesendpendance250mtresdunecole_9},
+            {label: '<img src="legend/Tamponde250mtresentourantuneressourceendpendance_8.png" /> Tampon de 250 mètres entourant une ressource en dépendance', layer: layer_Tamponde250mtresentourantuneressourceendpendance_8},]},
+        {label: '<b>Écoles préscolaires - primaires - secondaires</b>', selectAllCheckbox: true, children: [
+            {label: '<img src="legend/coles250mtresduneressourceendpendance_7.png" /> Écoles à 250 mètres d\'une ressource en dépendance', layer: layer_coles250mtresduneressourceendpendance_7},
+            {label: '<img src="legend/Ressourcesendpendance250mtresdunecole_6.png" /> Ressources en dépendance à 250 mètres d\'une école', layer: layer_Ressourcesendpendance250mtresdunecole_6},
+            {label: '<img src="legend/Tamponde250mtresentourantuneressourceendpendance_5.png" /> Tampon de 250 mètres entourant une ressource en dépendance', layer: layer_Tamponde250mtresentourantuneressourceendpendance_5},]},
+        {label: '<b>Écoles secondaires</b>', selectAllCheckbox: true, children: [
+            {label: '<img src="legend/coles250mtresduneressourceendpendance_4.png" /> Écoles à 250 mètres d\'une ressource en dépendance', layer: layer_coles250mtresduneressourceendpendance_4},
+            {label: '<img src="legend/Ressourcesendpendance250mtresdunecole_3.png" /> Ressources en dépendance à 250 mètres d\'une école', layer: layer_Ressourcesendpendance250mtresdunecole_3},
+            {label: '<img src="legend/Tamponde250mtresentourantuneressourceendpendance_2.png" /> Tampon de 250 mètres entourant une ressource en dépendance', layer: layer_Tamponde250mtresentourantuneressourceendpendance_2},]},
+            {label: '<img src="legend/Municipalits_1.png" /> Municipalités', layer: layer_Municipalits_1},
+            {label: "Google Satellite", layer: layer_GoogleSatellite_0, radioGroup: 'bm' },]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"FEMME": "str","SEXUALITÉ": "str","FAMILLE": "str","HÉBERGEMENT": "str","SERVICE DE CONSOMMATION SUPERVISÉE": "str","CENTRE DE JOUR": "str","DÉPENDANCE": "str","SANTÉ MENTALE": "str","TRAVAIL DE RUE": "str","SERVICE ALIMENTAIRE": "str","JEUNESSE": "str","NALOXONE": "str","MAISON DE JEUNE": "str","SECTEUR": "str","CAMI": "str","PSOC": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_FEMME = document.createElement('div');
+            div_FEMME.id = "div_FEMME";
+            div_FEMME.className= "filterselect";
+            document.getElementById("menu").appendChild(div_FEMME);
+            sel_FEMME = document.createElement('select');
+            sel_FEMME.multiple = true;
+            sel_FEMME.size = 2;
+            sel_FEMME.id = "sel_FEMME";
+            var FEMME_options_str = "<option value='' unselected></option>";
+            sel_FEMME.onchange = function(){filterFunc()};
+            FEMME_options_str  += '<option value="NULL">NULL</option>';
+            FEMME_options_str  += '<option value="femme">femme</option>';
+            sel_FEMME.innerHTML = FEMME_options_str;
+            div_FEMME.appendChild(sel_FEMME);
+            var lab_FEMME = document.createElement('div');
+            lab_FEMME.innerHTML = 'FEMME';
+            lab_FEMME.className = 'filterlabel';
+            div_FEMME.appendChild(lab_FEMME);
+            var reset_FEMME = document.createElement('div');
+            reset_FEMME.innerHTML = 'clear filter';
+            reset_FEMME.className = 'filterlabel';
+            reset_FEMME.onclick = function() {
+                var options = document.getElementById("sel_FEMME").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_FEMME.appendChild(reset_FEMME);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_SEXUALIT = document.createElement('div');
+            div_SEXUALIT.id = "div_SEXUALIT";
+            div_SEXUALIT.className= "filterselect";
+            document.getElementById("menu").appendChild(div_SEXUALIT);
+            sel_SEXUALIT = document.createElement('select');
+            sel_SEXUALIT.multiple = true;
+            sel_SEXUALIT.size = 2;
+            sel_SEXUALIT.id = "sel_SEXUALIT";
+            var SEXUALIT_options_str = "<option value='' unselected></option>";
+            sel_SEXUALIT.onchange = function(){filterFunc()};
+            SEXUALIT_options_str  += '<option value="NULL">NULL</option>';
+            SEXUALIT_options_str  += '<option value="sexualité">sexualité</option>';
+            sel_SEXUALIT.innerHTML = SEXUALIT_options_str;
+            div_SEXUALIT.appendChild(sel_SEXUALIT);
+            var lab_SEXUALIT = document.createElement('div');
+            lab_SEXUALIT.innerHTML = 'SEXUALITÉ';
+            lab_SEXUALIT.className = 'filterlabel';
+            div_SEXUALIT.appendChild(lab_SEXUALIT);
+            var reset_SEXUALIT = document.createElement('div');
+            reset_SEXUALIT.innerHTML = 'clear filter';
+            reset_SEXUALIT.className = 'filterlabel';
+            reset_SEXUALIT.onclick = function() {
+                var options = document.getElementById("sel_SEXUALIT").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_SEXUALIT.appendChild(reset_SEXUALIT);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_FAMILLE = document.createElement('div');
+            div_FAMILLE.id = "div_FAMILLE";
+            div_FAMILLE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_FAMILLE);
+            sel_FAMILLE = document.createElement('select');
+            sel_FAMILLE.multiple = true;
+            sel_FAMILLE.size = 2;
+            sel_FAMILLE.id = "sel_FAMILLE";
+            var FAMILLE_options_str = "<option value='' unselected></option>";
+            sel_FAMILLE.onchange = function(){filterFunc()};
+            FAMILLE_options_str  += '<option value="NULL">NULL</option>';
+            FAMILLE_options_str  += '<option value="famille">famille</option>';
+            sel_FAMILLE.innerHTML = FAMILLE_options_str;
+            div_FAMILLE.appendChild(sel_FAMILLE);
+            var lab_FAMILLE = document.createElement('div');
+            lab_FAMILLE.innerHTML = 'FAMILLE';
+            lab_FAMILLE.className = 'filterlabel';
+            div_FAMILLE.appendChild(lab_FAMILLE);
+            var reset_FAMILLE = document.createElement('div');
+            reset_FAMILLE.innerHTML = 'clear filter';
+            reset_FAMILLE.className = 'filterlabel';
+            reset_FAMILLE.onclick = function() {
+                var options = document.getElementById("sel_FAMILLE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_FAMILLE.appendChild(reset_FAMILLE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_HBERGEMENT = document.createElement('div');
+            div_HBERGEMENT.id = "div_HBERGEMENT";
+            div_HBERGEMENT.className= "filterselect";
+            document.getElementById("menu").appendChild(div_HBERGEMENT);
+            sel_HBERGEMENT = document.createElement('select');
+            sel_HBERGEMENT.multiple = true;
+            sel_HBERGEMENT.size = 2;
+            sel_HBERGEMENT.id = "sel_HBERGEMENT";
+            var HBERGEMENT_options_str = "<option value='' unselected></option>";
+            sel_HBERGEMENT.onchange = function(){filterFunc()};
+            HBERGEMENT_options_str  += '<option value="NULL">NULL</option>';
+            HBERGEMENT_options_str  += '<option value="hébergement">hébergement</option>';
+            sel_HBERGEMENT.innerHTML = HBERGEMENT_options_str;
+            div_HBERGEMENT.appendChild(sel_HBERGEMENT);
+            var lab_HBERGEMENT = document.createElement('div');
+            lab_HBERGEMENT.innerHTML = 'HÉBERGEMENT';
+            lab_HBERGEMENT.className = 'filterlabel';
+            div_HBERGEMENT.appendChild(lab_HBERGEMENT);
+            var reset_HBERGEMENT = document.createElement('div');
+            reset_HBERGEMENT.innerHTML = 'clear filter';
+            reset_HBERGEMENT.className = 'filterlabel';
+            reset_HBERGEMENT.onclick = function() {
+                var options = document.getElementById("sel_HBERGEMENT").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_HBERGEMENT.appendChild(reset_HBERGEMENT);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_SERVICEDECONSOMMATIONSUPERVISE = document.createElement('div');
+            div_SERVICEDECONSOMMATIONSUPERVISE.id = "div_SERVICEDECONSOMMATIONSUPERVISE";
+            div_SERVICEDECONSOMMATIONSUPERVISE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_SERVICEDECONSOMMATIONSUPERVISE);
+            sel_SERVICEDECONSOMMATIONSUPERVISE = document.createElement('select');
+            sel_SERVICEDECONSOMMATIONSUPERVISE.multiple = true;
+            sel_SERVICEDECONSOMMATIONSUPERVISE.size = 2;
+            sel_SERVICEDECONSOMMATIONSUPERVISE.id = "sel_SERVICEDECONSOMMATIONSUPERVISE";
+            var SERVICEDECONSOMMATIONSUPERVISE_options_str = "<option value='' unselected></option>";
+            sel_SERVICEDECONSOMMATIONSUPERVISE.onchange = function(){filterFunc()};
+            SERVICEDECONSOMMATIONSUPERVISE_options_str  += '<option value="NULL">NULL</option>';
+            SERVICEDECONSOMMATIONSUPERVISE_options_str  += '<option value="service de consommation supervisée">service de consommation supervisée</option>';
+            sel_SERVICEDECONSOMMATIONSUPERVISE.innerHTML = SERVICEDECONSOMMATIONSUPERVISE_options_str;
+            div_SERVICEDECONSOMMATIONSUPERVISE.appendChild(sel_SERVICEDECONSOMMATIONSUPERVISE);
+            var lab_SERVICEDECONSOMMATIONSUPERVISE = document.createElement('div');
+            lab_SERVICEDECONSOMMATIONSUPERVISE.innerHTML = 'SERVICE DE CONSOMMATION SUPERVISÉE';
+            lab_SERVICEDECONSOMMATIONSUPERVISE.className = 'filterlabel';
+            div_SERVICEDECONSOMMATIONSUPERVISE.appendChild(lab_SERVICEDECONSOMMATIONSUPERVISE);
+            var reset_SERVICEDECONSOMMATIONSUPERVISE = document.createElement('div');
+            reset_SERVICEDECONSOMMATIONSUPERVISE.innerHTML = 'clear filter';
+            reset_SERVICEDECONSOMMATIONSUPERVISE.className = 'filterlabel';
+            reset_SERVICEDECONSOMMATIONSUPERVISE.onclick = function() {
+                var options = document.getElementById("sel_SERVICEDECONSOMMATIONSUPERVISE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_SERVICEDECONSOMMATIONSUPERVISE.appendChild(reset_SERVICEDECONSOMMATIONSUPERVISE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_CENTREDEJOUR = document.createElement('div');
+            div_CENTREDEJOUR.id = "div_CENTREDEJOUR";
+            div_CENTREDEJOUR.className= "filterselect";
+            document.getElementById("menu").appendChild(div_CENTREDEJOUR);
+            sel_CENTREDEJOUR = document.createElement('select');
+            sel_CENTREDEJOUR.multiple = true;
+            sel_CENTREDEJOUR.size = 2;
+            sel_CENTREDEJOUR.id = "sel_CENTREDEJOUR";
+            var CENTREDEJOUR_options_str = "<option value='' unselected></option>";
+            sel_CENTREDEJOUR.onchange = function(){filterFunc()};
+            CENTREDEJOUR_options_str  += '<option value="NULL">NULL</option>';
+            CENTREDEJOUR_options_str  += '<option value="centre de jour">centre de jour</option>';
+            sel_CENTREDEJOUR.innerHTML = CENTREDEJOUR_options_str;
+            div_CENTREDEJOUR.appendChild(sel_CENTREDEJOUR);
+            var lab_CENTREDEJOUR = document.createElement('div');
+            lab_CENTREDEJOUR.innerHTML = 'CENTRE DE JOUR';
+            lab_CENTREDEJOUR.className = 'filterlabel';
+            div_CENTREDEJOUR.appendChild(lab_CENTREDEJOUR);
+            var reset_CENTREDEJOUR = document.createElement('div');
+            reset_CENTREDEJOUR.innerHTML = 'clear filter';
+            reset_CENTREDEJOUR.className = 'filterlabel';
+            reset_CENTREDEJOUR.onclick = function() {
+                var options = document.getElementById("sel_CENTREDEJOUR").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_CENTREDEJOUR.appendChild(reset_CENTREDEJOUR);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_DPENDANCE = document.createElement('div');
+            div_DPENDANCE.id = "div_DPENDANCE";
+            div_DPENDANCE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_DPENDANCE);
+            sel_DPENDANCE = document.createElement('select');
+            sel_DPENDANCE.multiple = true;
+            sel_DPENDANCE.size = 2;
+            sel_DPENDANCE.id = "sel_DPENDANCE";
+            var DPENDANCE_options_str = "<option value='' unselected></option>";
+            sel_DPENDANCE.onchange = function(){filterFunc()};
+            DPENDANCE_options_str  += '<option value="NULL">NULL</option>';
+            DPENDANCE_options_str  += '<option value="dépendance">dépendance</option>';
+            sel_DPENDANCE.innerHTML = DPENDANCE_options_str;
+            div_DPENDANCE.appendChild(sel_DPENDANCE);
+            var lab_DPENDANCE = document.createElement('div');
+            lab_DPENDANCE.innerHTML = 'DÉPENDANCE';
+            lab_DPENDANCE.className = 'filterlabel';
+            div_DPENDANCE.appendChild(lab_DPENDANCE);
+            var reset_DPENDANCE = document.createElement('div');
+            reset_DPENDANCE.innerHTML = 'clear filter';
+            reset_DPENDANCE.className = 'filterlabel';
+            reset_DPENDANCE.onclick = function() {
+                var options = document.getElementById("sel_DPENDANCE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_DPENDANCE.appendChild(reset_DPENDANCE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_SANTMENTALE = document.createElement('div');
+            div_SANTMENTALE.id = "div_SANTMENTALE";
+            div_SANTMENTALE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_SANTMENTALE);
+            sel_SANTMENTALE = document.createElement('select');
+            sel_SANTMENTALE.multiple = true;
+            sel_SANTMENTALE.size = 2;
+            sel_SANTMENTALE.id = "sel_SANTMENTALE";
+            var SANTMENTALE_options_str = "<option value='' unselected></option>";
+            sel_SANTMENTALE.onchange = function(){filterFunc()};
+            SANTMENTALE_options_str  += '<option value="NULL">NULL</option>';
+            SANTMENTALE_options_str  += '<option value="santé mentale">santé mentale</option>';
+            sel_SANTMENTALE.innerHTML = SANTMENTALE_options_str;
+            div_SANTMENTALE.appendChild(sel_SANTMENTALE);
+            var lab_SANTMENTALE = document.createElement('div');
+            lab_SANTMENTALE.innerHTML = 'SANTÉ MENTALE';
+            lab_SANTMENTALE.className = 'filterlabel';
+            div_SANTMENTALE.appendChild(lab_SANTMENTALE);
+            var reset_SANTMENTALE = document.createElement('div');
+            reset_SANTMENTALE.innerHTML = 'clear filter';
+            reset_SANTMENTALE.className = 'filterlabel';
+            reset_SANTMENTALE.onclick = function() {
+                var options = document.getElementById("sel_SANTMENTALE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_SANTMENTALE.appendChild(reset_SANTMENTALE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_TRAVAILDERUE = document.createElement('div');
+            div_TRAVAILDERUE.id = "div_TRAVAILDERUE";
+            div_TRAVAILDERUE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_TRAVAILDERUE);
+            sel_TRAVAILDERUE = document.createElement('select');
+            sel_TRAVAILDERUE.multiple = true;
+            sel_TRAVAILDERUE.size = 2;
+            sel_TRAVAILDERUE.id = "sel_TRAVAILDERUE";
+            var TRAVAILDERUE_options_str = "<option value='' unselected></option>";
+            sel_TRAVAILDERUE.onchange = function(){filterFunc()};
+            TRAVAILDERUE_options_str  += '<option value="NULL">NULL</option>';
+            TRAVAILDERUE_options_str  += '<option value="travail de rue">travail de rue</option>';
+            sel_TRAVAILDERUE.innerHTML = TRAVAILDERUE_options_str;
+            div_TRAVAILDERUE.appendChild(sel_TRAVAILDERUE);
+            var lab_TRAVAILDERUE = document.createElement('div');
+            lab_TRAVAILDERUE.innerHTML = 'TRAVAIL DE RUE';
+            lab_TRAVAILDERUE.className = 'filterlabel';
+            div_TRAVAILDERUE.appendChild(lab_TRAVAILDERUE);
+            var reset_TRAVAILDERUE = document.createElement('div');
+            reset_TRAVAILDERUE.innerHTML = 'clear filter';
+            reset_TRAVAILDERUE.className = 'filterlabel';
+            reset_TRAVAILDERUE.onclick = function() {
+                var options = document.getElementById("sel_TRAVAILDERUE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_TRAVAILDERUE.appendChild(reset_TRAVAILDERUE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_SERVICEALIMENTAIRE = document.createElement('div');
+            div_SERVICEALIMENTAIRE.id = "div_SERVICEALIMENTAIRE";
+            div_SERVICEALIMENTAIRE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_SERVICEALIMENTAIRE);
+            sel_SERVICEALIMENTAIRE = document.createElement('select');
+            sel_SERVICEALIMENTAIRE.multiple = true;
+            sel_SERVICEALIMENTAIRE.size = 2;
+            sel_SERVICEALIMENTAIRE.id = "sel_SERVICEALIMENTAIRE";
+            var SERVICEALIMENTAIRE_options_str = "<option value='' unselected></option>";
+            sel_SERVICEALIMENTAIRE.onchange = function(){filterFunc()};
+            SERVICEALIMENTAIRE_options_str  += '<option value="NULL">NULL</option>';
+            SERVICEALIMENTAIRE_options_str  += '<option value="service alimentaire">service alimentaire</option>';
+            sel_SERVICEALIMENTAIRE.innerHTML = SERVICEALIMENTAIRE_options_str;
+            div_SERVICEALIMENTAIRE.appendChild(sel_SERVICEALIMENTAIRE);
+            var lab_SERVICEALIMENTAIRE = document.createElement('div');
+            lab_SERVICEALIMENTAIRE.innerHTML = 'SERVICE ALIMENTAIRE';
+            lab_SERVICEALIMENTAIRE.className = 'filterlabel';
+            div_SERVICEALIMENTAIRE.appendChild(lab_SERVICEALIMENTAIRE);
+            var reset_SERVICEALIMENTAIRE = document.createElement('div');
+            reset_SERVICEALIMENTAIRE.innerHTML = 'clear filter';
+            reset_SERVICEALIMENTAIRE.className = 'filterlabel';
+            reset_SERVICEALIMENTAIRE.onclick = function() {
+                var options = document.getElementById("sel_SERVICEALIMENTAIRE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_SERVICEALIMENTAIRE.appendChild(reset_SERVICEALIMENTAIRE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_JEUNESSE = document.createElement('div');
+            div_JEUNESSE.id = "div_JEUNESSE";
+            div_JEUNESSE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_JEUNESSE);
+            sel_JEUNESSE = document.createElement('select');
+            sel_JEUNESSE.multiple = true;
+            sel_JEUNESSE.size = 2;
+            sel_JEUNESSE.id = "sel_JEUNESSE";
+            var JEUNESSE_options_str = "<option value='' unselected></option>";
+            sel_JEUNESSE.onchange = function(){filterFunc()};
+            JEUNESSE_options_str  += '<option value="NULL">NULL</option>';
+            JEUNESSE_options_str  += '<option value="jeunesse">jeunesse</option>';
+            sel_JEUNESSE.innerHTML = JEUNESSE_options_str;
+            div_JEUNESSE.appendChild(sel_JEUNESSE);
+            var lab_JEUNESSE = document.createElement('div');
+            lab_JEUNESSE.innerHTML = 'JEUNESSE';
+            lab_JEUNESSE.className = 'filterlabel';
+            div_JEUNESSE.appendChild(lab_JEUNESSE);
+            var reset_JEUNESSE = document.createElement('div');
+            reset_JEUNESSE.innerHTML = 'clear filter';
+            reset_JEUNESSE.className = 'filterlabel';
+            reset_JEUNESSE.onclick = function() {
+                var options = document.getElementById("sel_JEUNESSE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_JEUNESSE.appendChild(reset_JEUNESSE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_NALOXONE = document.createElement('div');
+            div_NALOXONE.id = "div_NALOXONE";
+            div_NALOXONE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_NALOXONE);
+            sel_NALOXONE = document.createElement('select');
+            sel_NALOXONE.multiple = true;
+            sel_NALOXONE.size = 2;
+            sel_NALOXONE.id = "sel_NALOXONE";
+            var NALOXONE_options_str = "<option value='' unselected></option>";
+            sel_NALOXONE.onchange = function(){filterFunc()};
+            NALOXONE_options_str  += '<option value="NULL">NULL</option>';
+            NALOXONE_options_str  += '<option value="naloxone">naloxone</option>';
+            sel_NALOXONE.innerHTML = NALOXONE_options_str;
+            div_NALOXONE.appendChild(sel_NALOXONE);
+            var lab_NALOXONE = document.createElement('div');
+            lab_NALOXONE.innerHTML = 'NALOXONE';
+            lab_NALOXONE.className = 'filterlabel';
+            div_NALOXONE.appendChild(lab_NALOXONE);
+            var reset_NALOXONE = document.createElement('div');
+            reset_NALOXONE.innerHTML = 'clear filter';
+            reset_NALOXONE.className = 'filterlabel';
+            reset_NALOXONE.onclick = function() {
+                var options = document.getElementById("sel_NALOXONE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_NALOXONE.appendChild(reset_NALOXONE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_MAISONDEJEUNE = document.createElement('div');
+            div_MAISONDEJEUNE.id = "div_MAISONDEJEUNE";
+            div_MAISONDEJEUNE.className= "filterselect";
+            document.getElementById("menu").appendChild(div_MAISONDEJEUNE);
+            sel_MAISONDEJEUNE = document.createElement('select');
+            sel_MAISONDEJEUNE.multiple = true;
+            sel_MAISONDEJEUNE.size = 2;
+            sel_MAISONDEJEUNE.id = "sel_MAISONDEJEUNE";
+            var MAISONDEJEUNE_options_str = "<option value='' unselected></option>";
+            sel_MAISONDEJEUNE.onchange = function(){filterFunc()};
+            MAISONDEJEUNE_options_str  += '<option value="NULL">NULL</option>';
+            MAISONDEJEUNE_options_str  += '<option value="maison de jeune">maison de jeune</option>';
+            sel_MAISONDEJEUNE.innerHTML = MAISONDEJEUNE_options_str;
+            div_MAISONDEJEUNE.appendChild(sel_MAISONDEJEUNE);
+            var lab_MAISONDEJEUNE = document.createElement('div');
+            lab_MAISONDEJEUNE.innerHTML = 'MAISON DE JEUNE';
+            lab_MAISONDEJEUNE.className = 'filterlabel';
+            div_MAISONDEJEUNE.appendChild(lab_MAISONDEJEUNE);
+            var reset_MAISONDEJEUNE = document.createElement('div');
+            reset_MAISONDEJEUNE.innerHTML = 'clear filter';
+            reset_MAISONDEJEUNE.className = 'filterlabel';
+            reset_MAISONDEJEUNE.onclick = function() {
+                var options = document.getElementById("sel_MAISONDEJEUNE").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_MAISONDEJEUNE.appendChild(reset_MAISONDEJEUNE);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_SECTEUR = document.createElement('div');
+            div_SECTEUR.id = "div_SECTEUR";
+            div_SECTEUR.className= "filterselect";
+            document.getElementById("menu").appendChild(div_SECTEUR);
+            sel_SECTEUR = document.createElement('select');
+            sel_SECTEUR.multiple = true;
+            sel_SECTEUR.size = 2;
+            sel_SECTEUR.id = "sel_SECTEUR";
+            var SECTEUR_options_str = "<option value='' unselected></option>";
+            sel_SECTEUR.onchange = function(){filterFunc()};
+            SECTEUR_options_str  += '<option value="communautaire">communautaire</option>';
+            SECTEUR_options_str  += '<option value="institutionnel">institutionnel</option>';
+            sel_SECTEUR.innerHTML = SECTEUR_options_str;
+            div_SECTEUR.appendChild(sel_SECTEUR);
+            var lab_SECTEUR = document.createElement('div');
+            lab_SECTEUR.innerHTML = 'SECTEUR';
+            lab_SECTEUR.className = 'filterlabel';
+            div_SECTEUR.appendChild(lab_SECTEUR);
+            var reset_SECTEUR = document.createElement('div');
+            reset_SECTEUR.innerHTML = 'clear filter';
+            reset_SECTEUR.className = 'filterlabel';
+            reset_SECTEUR.onclick = function() {
+                var options = document.getElementById("sel_SECTEUR").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_SECTEUR.appendChild(reset_SECTEUR);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_CAMI = document.createElement('div');
+            div_CAMI.id = "div_CAMI";
+            div_CAMI.className= "filterselect";
+            document.getElementById("menu").appendChild(div_CAMI);
+            sel_CAMI = document.createElement('select');
+            sel_CAMI.multiple = true;
+            sel_CAMI.size = 2;
+            sel_CAMI.id = "sel_CAMI";
+            var CAMI_options_str = "<option value='' unselected></option>";
+            sel_CAMI.onchange = function(){filterFunc()};
+            CAMI_options_str  += '<option value="NULL">NULL</option>';
+            CAMI_options_str  += '<option value="CAMI">CAMI</option>';
+            sel_CAMI.innerHTML = CAMI_options_str;
+            div_CAMI.appendChild(sel_CAMI);
+            var lab_CAMI = document.createElement('div');
+            lab_CAMI.innerHTML = 'CAMI';
+            lab_CAMI.className = 'filterlabel';
+            div_CAMI.appendChild(lab_CAMI);
+            var reset_CAMI = document.createElement('div');
+            reset_CAMI.innerHTML = 'clear filter';
+            reset_CAMI.className = 'filterlabel';
+            reset_CAMI.onclick = function() {
+                var options = document.getElementById("sel_CAMI").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_CAMI.appendChild(reset_CAMI);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_PSOC = document.createElement('div');
+            div_PSOC.id = "div_PSOC";
+            div_PSOC.className= "filterselect";
+            document.getElementById("menu").appendChild(div_PSOC);
+            sel_PSOC = document.createElement('select');
+            sel_PSOC.multiple = true;
+            sel_PSOC.size = 2;
+            sel_PSOC.id = "sel_PSOC";
+            var PSOC_options_str = "<option value='' unselected></option>";
+            sel_PSOC.onchange = function(){filterFunc()};
+            PSOC_options_str  += '<option value="NULL">NULL</option>';
+            PSOC_options_str  += '<option value="PSOC">PSOC</option>';
+            sel_PSOC.innerHTML = PSOC_options_str;
+            div_PSOC.appendChild(sel_PSOC);
+            var lab_PSOC = document.createElement('div');
+            lab_PSOC.innerHTML = 'PSOC';
+            lab_PSOC.className = 'filterlabel';
+            div_PSOC.appendChild(lab_PSOC);
+            var reset_PSOC = document.createElement('div');
+            reset_PSOC.innerHTML = 'clear filter';
+            reset_PSOC.className = 'filterlabel';
+            reset_PSOC.onclick = function() {
+                var options = document.getElementById("sel_PSOC").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_PSOC.appendChild(reset_PSOC);
+        </script>
+    </body>
+</html>
